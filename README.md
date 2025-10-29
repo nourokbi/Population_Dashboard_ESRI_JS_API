@@ -20,28 +20,33 @@ A modern, interactive web application for visualizing and analyzing global popul
 ## 🛠️ Technologies Used
 
 ### Frontend Framework
+
 - **React 19.1.1** - Modern UI library with hooks and functional components
 - **Vite 7.1.7** - Fast build tool and development server
 
 ### Mapping & GIS
+
 - **@arcgis/core 4.30** - ArcGIS Maps SDK for JavaScript
 - **ArcGIS Feature Layer** - World Population data service (1970-2022)
-- **Basemaps**: 
+- **Basemaps**:
   - Light mode: `gray-vector`
   - Dark mode: `dark-gray-vector`
 
 ### Styling
+
 - **CSS3** - Custom styling with flexbox and grid layouts
 - **Theme System** - Dynamic light/dark mode with smooth transitions
 - **Glassmorphism** - Modern UI effects with backdrop filters
 
 ### Development Tools
+
 - **ESLint** - Code quality and consistency
 - **Git** - Version control
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js (v16 or higher)
 - npm or yarn package manager
 - Git
@@ -49,23 +54,26 @@ A modern, interactive web application for visualizing and analyzing global popul
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/nourokbi/Population_Dashboard_ESRI_JS_API.git
 cd Population_Dashboard_ESRI_JS_API
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Start the development server**
+
 ```bash
 npm run dev
 ```
 
 4. **Open your browser**
-Navigate to `http://localhost:5173` (or the port shown in your terminal)
+   Navigate to `http://localhost:5173` (or the port shown in your terminal)
 
 ### Build for Production
 
@@ -109,6 +117,7 @@ npm run preview
 ## 🎨 Key Components
 
 ### PopulationMap
+
 - Initializes ArcGIS Map and MapView
 - Loads world population feature layer
 - Handles theme-based basemap switching
@@ -116,6 +125,7 @@ npm run preview
 - Manages map lifecycle and cleanup
 
 ### Sidebar
+
 - Country dropdown with 251 countries
 - Real-time search filtering
 - Year selector (1970-2022)
@@ -123,12 +133,14 @@ npm run preview
 - Dynamic country list from feature layer
 
 ### Navbar
+
 - Application branding and title
 - Centralized search input
 - Theme toggle button (light/dark)
 - Responsive layout
 
 ### Charts
+
 - Placeholder sections for future data visualizations
 - Grid layout for multiple charts
 - Theme-aware styling
@@ -136,6 +148,7 @@ npm run preview
 ## 🌐 Data Source
 
 Population data is sourced from the ArcGIS Feature Service:
+
 ```
 https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/WorldPopulationFrom_1970_To_2022/FeatureServer/0
 ```
@@ -156,6 +169,7 @@ This project is licensed under the MIT License.
 ## 👤 Author
 
 **Nour Okbi**
+
 - GitHub: [@nourokbi](https://github.com/nourokbi)
 
 ## 🙏 Acknowledgments
