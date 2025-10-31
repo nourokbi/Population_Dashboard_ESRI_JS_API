@@ -53,6 +53,7 @@ function PopulationMap({
 
     view
       .when(() => {
+        // Adding and removing widgets
         view.ui.remove("attribution");
 
         const homeWidget = new Home({
@@ -66,22 +67,18 @@ function PopulationMap({
         });
         view.ui.add(scaleBar, "bottom-left");
 
-        // Add click event to zoom to country when clicked on map
+        // Achieve zoom to country on click
         view.on("click", (event) => {
           view.hitTest(event).then((response) => {
             if (response.results.length > 0) {
               const graphic = response.results[0].graphic;
-              // Check if the clicked feature is from the population layer
               if (graphic.layer && graphic.layer.title !== "World Hillshade") {
-                // Get the country name from the clicked feature
                 const countryName = graphic.attributes.COUNTRY;
 
-                // Update the selected country in parent component
                 if (onCountryClick && countryName) {
                   onCountryClick(countryName);
                 }
 
-                // Zoom to the clicked country's extent
                 view
                   .goTo(
                     {
@@ -100,7 +97,6 @@ function PopulationMap({
           });
         });
 
-        // Pass view to parent component
         if (onViewLoad) {
           onViewLoad(view);
         }
@@ -112,7 +108,7 @@ function PopulationMap({
     const populationLayer = new FeatureLayer({
       url: "https://services3.arcgis.com/UDCw00RKDRKPqASe/arcgis/rest/services/WorldPopulationFrom_1970_To_2022/FeatureServer/0",
       outFields: ["*"],
-      popupEnabled: false, // Disable popup
+      popupEnabled: false,
     });
 
     layerRef.current = populationLayer;

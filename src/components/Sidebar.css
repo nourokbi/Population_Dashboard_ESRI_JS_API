@@ -9,6 +9,10 @@
   flex-direction: column;
   border-left: 3px solid #4a7c59;
   transition: background-color 0.3s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 10;
 }
 
 .app-container.dark .sidebar {
@@ -150,6 +154,125 @@
   margin: 0;
 }
 
+/* Growth Statistics Box */
+.growth-stats-box {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #4a7c59;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.app-container.dark .growth-stats-box {
+  background: linear-gradient(135deg, #3d3d3d 0%, #2d2d2d 100%);
+  border-color: #a8f5a8;
+}
+
+.growth-stats-box h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2d5a3d;
+  margin: 0 0 15px 0;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.app-container.dark .growth-stats-box h3 {
+  color: #a8f5a8;
+}
+
+.growth-stats-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.growth-stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: white;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.app-container.dark .growth-stat-item {
+  background-color: #2d2d2d;
+  border-color: #555;
+}
+
+.growth-stat-item.highlight {
+  background: linear-gradient(135deg, #4a7c59 0%, #2d5a3d 100%);
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.app-container.dark .growth-stat-item.highlight {
+  background: linear-gradient(135deg, #4a7c59 0%, #2d5a3d 100%);
+  border: none;
+}
+
+.growth-stat-item.highlight .growth-stat-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 700;
+}
+
+.growth-stat-item.highlight .growth-stat-value {
+  color: white;
+}
+
+.growth-stat-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.app-container.dark .growth-stat-label {
+  color: #b0b0b0;
+}
+
+.growth-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.app-container.dark .growth-stat-value {
+  color: #e0e0e0;
+}
+
+.growth-stat-value .positive {
+  color: #2d5a3d;
+}
+
+.app-container.dark .growth-stat-value .positive {
+  color: #a8f5a8;
+}
+
+.growth-stat-item.highlight .growth-stat-value .positive {
+  color: #a8f5a8;
+}
+
+.growth-stat-value .negative {
+  color: #c0392b;
+}
+
+.app-container.dark .growth-stat-value .negative {
+  color: #ffb3b3;
+}
+
+.growth-stat-item.highlight .growth-stat-value .negative {
+  color: #ffb3b3;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Tablets */
@@ -187,6 +310,23 @@
     flex: 1;
     min-height: 120px;
   }
+
+  .growth-stats-box {
+    padding: 15px;
+    margin-top: 15px;
+  }
+
+  .growth-stat-item {
+    padding: 8px;
+  }
+
+  .growth-stat-label {
+    font-size: 12px;
+  }
+
+  .growth-stat-value {
+    font-size: 15px;
+  }
 }
 
 /* Mobile Landscape */
@@ -219,6 +359,28 @@
 
   .info-label {
     font-size: 11px;
+  }
+
+  .growth-stats-box {
+    padding: 12px;
+    margin-top: 12px;
+  }
+
+  .growth-stats-box h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .growth-stat-item {
+    padding: 8px;
+  }
+
+  .growth-stat-label {
+    font-size: 11px;
+  }
+
+  .growth-stat-value {
+    font-size: 14px;
   }
 }
 
@@ -259,5 +421,31 @@
 
   .country-select {
     max-height: 120px;
+  }
+
+  .growth-stats-box {
+    padding: 10px;
+    margin-top: 10px;
+  }
+
+  .growth-stats-box h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .growth-stat-item {
+    padding: 8px 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .growth-stat-label {
+    font-size: 10px;
+  }
+
+  .growth-stat-value {
+    font-size: 13px;
+    align-self: flex-end;
   }
 }

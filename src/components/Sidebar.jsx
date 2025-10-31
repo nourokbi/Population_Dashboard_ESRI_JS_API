@@ -185,6 +185,32 @@ function Sidebar({
 
   const growthRate = calculateGrowthRate(currentPopulation, previousPopulation);
 
+  // Calculate total growth from 1970 to 2022
+  const firstYearField = getYearFieldName("1970");
+  const lastYearField = getYearFieldName("2022");
+
+  const firstYearPopulation = displayData
+    ? displayData[firstYearField]
+    : worldData
+    ? worldData["1970"]
+    : null;
+
+  const lastYearPopulation = displayData
+    ? displayData[lastYearField]
+    : worldData
+    ? worldData["2022"]
+    : null;
+
+  const totalGrowth =
+    firstYearPopulation && lastYearPopulation
+      ? lastYearPopulation - firstYearPopulation
+      : null;
+
+  const totalGrowthRate = calculateGrowthRate(
+    lastYearPopulation,
+    firstYearPopulation
+  );
+
   return (
     <div className="sidebar">
       <div className="form-section">
@@ -258,6 +284,58 @@ function Sidebar({
           </div>
         </div>
       </div>
+
+      {selectedCountry && countryData && (
+        <div className="growth-stats-box">
+          <h3>Total Growth (1970 - 2022)</h3>
+          <div className="growth-stats-content">
+            <div className="growth-stat-item">
+              <div className="growth-stat-label">1970 Population</div>
+              <div className="growth-stat-value">
+                {firstYearPopulation
+                  ? formatPopulation(firstYearPopulation)
+                  : "N/A"}
+              </div>
+            </div>
+            <div className="growth-stat-item">
+              <div className="growth-stat-label">2022 Population</div>
+              <div className="growth-stat-value">
+                {lastYearPopulation
+                  ? formatPopulation(lastYearPopulation)
+                  : "N/A"}
+              </div>
+            </div>
+            <div className="growth-stat-item highlight">
+              <div className="growth-stat-label">Total Change</div>
+              <div className="growth-stat-value">
+                {totalGrowth !== null ? (
+                  <span className={totalGrowth >= 0 ? "positive" : "negative"}>
+                    {totalGrowth >= 0 ? "+" : ""}
+                    {formatPopulation(totalGrowth)}
+                  </span>
+                ) : (
+                  "N/A"
+                )}
+              </div>
+            </div>
+            <div className="growth-stat-item highlight">
+              <div className="growth-stat-label">Growth Rate</div>
+              <div className="growth-stat-value">
+                {totalGrowthRate !== null ? (
+                  <span
+                    className={totalGrowthRate >= 0 ? "positive" : "negative"}
+                  >
+                    {totalGrowthRate >= 0 ? "+" : ""}
+                    {totalGrowthRate}%
+                  </span>
+                ) : (
+                  "N/A"
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
