@@ -12,6 +12,12 @@ import {
   Filler,
 } from "chart.js";
 import { Line, Bar } from "react-chartjs-2";
+import {
+  formatPopulation,
+  formatAxisLabel,
+  getYearFieldName,
+  AVAILABLE_YEARS,
+} from "../utils/formatters";
 import "./Charts.css";
 
 // Register Chart.js components
@@ -33,7 +39,7 @@ function Charts({ populationLayer, selectedCountry, theme, selectedYear }) {
   const [loading, setLoading] = useState(false);
   const [loadingTop10, setLoadingTop10] = useState(false);
 
-  const years = [1970, 1980, 1990, 2000, 2010, 2015, 2020, 2022];
+  const years = AVAILABLE_YEARS;
 
   // Fetch population data for selected country or world
   useEffect(() => {
@@ -90,7 +96,7 @@ function Charts({ populationLayer, selectedCountry, theme, selectedYear }) {
         .queryFeatures(query)
         .then((results) => {
           const worldData = years.map((year) => {
-            const fieldName = `F${year}_Population`;
+            const fieldName = getYearFieldName(year);
             let total = 0;
             results.features.forEach((feature) => {
               const pop = feature.attributes[fieldName];
@@ -132,9 +138,10 @@ function Charts({ populationLayer, selectedCountry, theme, selectedYear }) {
     if (!populationLayer || !selectedYear) return;
 
     setLoadingTop10(true);
+    const fieldName = getYearFieldName(selectedYear);
     const query = populationLayer.createQuery();
     query.where = "1=1";
-    query.outFields = ["COUNTRY", `F${selectedYear}_Population`];
+    query.outFields = ["COUNTRY", fieldName];
 
     populationLayer
       .queryFeatures(query)
@@ -143,7 +150,7 @@ function Charts({ populationLayer, selectedCountry, theme, selectedYear }) {
         const countriesData = results.features
           .map((feature) => ({
             country: feature.attributes.COUNTRY,
-            population: feature.attributes[`F${selectedYear}_Population`] || 0,
+            population: feature.attributes[fieldName] || 0,
           }))
           .filter((item) => item.population > 0)
           .sort((a, b) => b.population - a.population)
@@ -232,15 +239,7 @@ function Charts({ populationLayer, selectedCountry, theme, selectedYear }) {
               label += ": ";
             }
             const value = context.parsed.y;
-            if (value >= 1000000000) {
-              label += (value / 1000000000).toFixed(2) + "B";
-            } else if (value >= 1000000) {
-              label += (value / 1000000).toFixed(2) + "M";
-            } else if (value >= 1000) {
-              label += (value / 1000).toFixed(2) + "K";
-            } else {
-              label += value;
-            }
+            label += formatPopulation(value);
             return label;
           },
         },
@@ -252,14 +251,7 @@ function Charts({ populationLayer, selectedCountry, theme, selectedYear }) {
         ticks: {
           color: theme === "dark" ? "#e0e0e0" : "#2c3e50",
           callback: function (value) {
-            if (value >= 1000000000) {
-              return (value / 1000000000).toFixed(1) + "B";
-            } else if (value >= 1000000) {
-              return (value / 1000000).toFixed(0) + "M";
-            } else if (value >= 1000) {
-              return (value / 1000).toFixed(0) + "K";
-            }
-            return value;
+            return formatAxisLabel(value);
           },
         },
         grid: {
@@ -324,14 +316,7 @@ function Charts({ populationLayer, selectedCountry, theme, selectedYear }) {
         callbacks: {
           label: function (context) {
             const value = context.parsed.x;
-            if (value >= 1000000000) {
-              return (value / 1000000000).toFixed(2) + "B";
-            } else if (value >= 1000000) {
-              return (value / 1000000).toFixed(2) + "M";
-            } else if (value >= 1000) {
-              return (value / 1000).toFixed(2) + "K";
-            }
-            return value;
+            return formatPopulation(value);
           },
         },
       },
@@ -342,14 +327,7 @@ function Charts({ populationLayer, selectedCountry, theme, selectedYear }) {
         ticks: {
           color: theme === "dark" ? "#e0e0e0" : "#2c3e50",
           callback: function (value) {
-            if (value >= 1000000000) {
-              return (value / 1000000000).toFixed(1) + "B";
-            } else if (value >= 1000000) {
-              return (value / 1000000).toFixed(0) + "M";
-            } else if (value >= 1000) {
-              return (value / 1000).toFixed(0) + "K";
-            }
-            return value;
+            return formatAxisLabel(value);
           },
         },
         grid: {
