@@ -1,14 +1,22 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import PopulationMap from "./components/PopulationMap";
 import Sidebar from "./components/Sidebar";
 import Charts from "./components/Charts";
+import { STORAGE_KEYS } from "./utils/constants";
+import { queryAllCountries } from "./utils/mapHelpers";
+import { getYearFieldName, AVAILABLE_YEARS } from "./utils/formatters";
 
 function App() {
   const [populationLayer, setPopulationLayer] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [theme, setTheme] = useState("light");
+  const [countries, setCountries] = useState([]);
+  const [worldData, setWorldData] = useState(null);
+  const [theme, setTheme] = useState(() => {
+    // Load theme from localStorage on initial render
+    const savedTheme = localStorage.getItem(STORAGE_KEYS.theme);
+    return savedTheme || "light";
+  });
   const [selectedCountry, setSelectedCountry] = useState("");
   const [mapView, setMapView] = useState(null);
   const [selectedYear, setSelectedYear] = useState("2022");
@@ -21,13 +29,63 @@ function App() {
     setMapView(view);
   }, []);
 
-  const handleSearchChange = (term) => {
-    setSearchTerm(term);
-  };
+  // Save theme to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.theme, theme);
+  }, [theme]);
+
+  // Fetch countries
+  useEffect(() => {
+    if (populationLayer) {
+      const query = populationLayer.createQuery();
+      query.where = "1=1";
+      query.outFields = ["COUNTRY"];
+      query.returnDistinctValues = true;
+      query.orderByFields = ["COUNTRY"];
+
+      populationLayer
+        .queryFeatures(query)
+        .then((results) => {
+          const countryList = results.features
+            .map((feature) => feature.attributes.COUNTRY)
+            .filter((country) => country);
+          setCountries(countryList);
+        })
+        .catch((error) => {
+          console.error("Error fetching countries:", error);
+        });
+    }
+  }, [populationLayer]);
+
+  // Fetch world data (used by both Sidebar and Charts)
+  useEffect(() => {
+    if (populationLayer) {
+      queryAllCountries(populationLayer)
+        .then((results) => {
+          // Calculate total world population for each year
+          const totals = {};
+          const years = AVAILABLE_YEARS.map(String);
+
+          years.forEach((year) => {
+            const fieldName = getYearFieldName(year);
+            let total = 0;
+            results.features.forEach((feature) => {
+              const pop = feature.attributes[fieldName];
+              if (pop) total += pop;
+            });
+            totals[year] = total;
+          });
+
+          setWorldData(totals);
+        })
+        .catch((error) => {
+          console.error("Error fetching world data:", error);
+        });
+    }
+  }, [populationLayer]);
 
   const handleCountrySelect = (country) => {
     setSelectedCountry(country);
-    setSearchTerm("");
   };
 
   const handleThemeToggle = () => {
@@ -37,10 +95,8 @@ function App() {
   return (
     <div className={`app-container ${theme}`}>
       <Navbar
-        searchTerm={searchTerm}
-        onSearchChange={handleSearchChange}
+        countries={countries}
         onCountrySelect={handleCountrySelect}
-        populationLayer={populationLayer}
         theme={theme}
         onThemeToggle={handleThemeToggle}
       />
@@ -58,11 +114,12 @@ function App() {
             <Sidebar
               populationLayer={populationLayer}
               mapView={mapView}
-              searchTerm={searchTerm}
+              countries={countries}
               selectedCountry={selectedCountry}
               onCountryChange={setSelectedCountry}
               selectedYear={selectedYear}
               onYearChange={setSelectedYear}
+              worldData={worldData}
             />
           </div>
         </div>
@@ -72,6 +129,7 @@ function App() {
             selectedCountry={selectedCountry}
             selectedYear={selectedYear}
             theme={theme}
+            worldData={worldData}
           />
         </div>
       </div>

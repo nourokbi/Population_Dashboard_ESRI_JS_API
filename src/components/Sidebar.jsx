@@ -4,21 +4,20 @@ import {
   getYearFieldName,
   AVAILABLE_YEARS,
 } from "../utils/formatters";
+import { queryCountry, zoomToCountry } from "../utils/mapHelpers";
 import "./Sidebar.css";
 
 function Sidebar({
   populationLayer,
   mapView,
-  searchTerm,
+  countries,
   selectedCountry,
   onCountryChange,
   selectedYear,
   onYearChange,
+  worldData,
 }) {
-  const [countries, setCountries] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [countryData, setCountryData] = useState(null);
-  const [worldData, setWorldData] = useState(null);
 
   const years = AVAILABLE_YEARS.map(String);
 
@@ -38,127 +37,71 @@ function Sidebar({
     return rate.toFixed(2);
   };
 
+  // Fetch country-specific data and zoom when country is selected
   useEffect(() => {
-    // Fetch countries from the layer when it's available
-    if (populationLayer) {
-      setLoading(true);
-      const query = populationLayer.createQuery();
-      query.where = "1=1";
-      query.outFields = ["COUNTRY"];
-      query.returnDistinctValues = true;
-      query.orderByFields = ["COUNTRY"];
+    let isMounted = true;
 
-      populationLayer
-        .queryFeatures(query)
-        .then((results) => {
-          const countryList = results.features
-            .map((feature) => feature.attributes.COUNTRY)
-            .filter((country) => country); // Remove null/undefined values
-          setCountries(countryList);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching countries:", error);
-          setLoading(false);
-        });
-    }
-  }, [populationLayer]);
-
-  // Zoom to country when selected (no popup)
-  useEffect(() => {
     if (selectedCountry && populationLayer && mapView) {
-      const query = populationLayer.createQuery();
-      query.where = `COUNTRY = '${selectedCountry}'`;
-      query.outFields = ["*"];
-      query.returnGeometry = true;
-
-      populationLayer
-        .queryFeatures(query)
+      // Query country with geometry for both data and zoom
+      queryCountry(populationLayer, selectedCountry, true)
         .then((results) => {
+          if (!isMounted) return;
+
           if (results.features.length > 0) {
             const feature = results.features[0];
+            const attributes = feature.attributes;
 
-            // Just zoom to the country, no popup
-            mapView
-              .goTo(
-                {
-                  target: feature.geometry.extent.expand(1.3),
-                },
-                {
-                  duration: 1500,
-                  easing: "ease-in-out",
+            // Check if country has any valid population data
+            const hasValidData = AVAILABLE_YEARS.some((year) => {
+              const fieldName = getYearFieldName(year);
+              const value = attributes[fieldName];
+              return value && value > 0;
+            });
+
+            if (hasValidData) {
+              // Set country data
+              setCountryData(attributes);
+
+              // Zoom to the country
+              zoomToCountry(mapView, feature.geometry).catch((error) => {
+                if (isMounted) {
+                  console.error("Error zooming to country:", error);
                 }
-              )
-              .catch((error) => {
-                console.error("Error zooming to country:", error);
               });
+            } else {
+              // Country exists but has no valid population data
+              console.log(
+                `Country ${selectedCountry} found but has no population data`
+              );
+              setCountryData("NO_DATA");
+            }
+          } else {
+            // No data found for this country
+            console.log(`No data found for country: ${selectedCountry}`);
+            setCountryData("NO_DATA");
           }
         })
         .catch((error) => {
-          console.error("Error querying country:", error);
-        });
-    }
-  }, [selectedCountry, populationLayer, mapView]);
-
-  // Fetch country-specific data when country is selected
-  useEffect(() => {
-    if (selectedCountry && populationLayer) {
-      const query = populationLayer.createQuery();
-      query.where = `COUNTRY = '${selectedCountry}'`;
-      query.outFields = ["*"];
-
-      populationLayer
-        .queryFeatures(query)
-        .then((results) => {
-          if (results.features.length > 0) {
-            setCountryData(results.features[0].attributes);
+          if (isMounted) {
+            console.error("Error querying country:", error);
+            setCountryData("NO_DATA");
           }
-        })
-        .catch((error) => {
-          console.error("Error fetching country data:", error);
         });
     } else {
       setCountryData(null);
     }
-  }, [selectedCountry, populationLayer]);
 
-  // Fetch world total population
-  useEffect(() => {
-    if (populationLayer) {
-      const query = populationLayer.createQuery();
-      query.where = "1=1";
-      query.outFields = ["*"];
-
-      populationLayer
-        .queryFeatures(query)
-        .then((results) => {
-          // Calculate total world population for each year
-          const totals = {};
-          years.forEach((year) => {
-            const fieldName = getYearFieldName(year);
-            let total = 0;
-            results.features.forEach((feature) => {
-              const pop = feature.attributes[fieldName];
-              if (pop) total += pop;
-            });
-            totals[year] = total;
-          });
-          setWorldData(totals);
-        })
-        .catch((error) => {
-          console.error("Error fetching world data:", error);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [populationLayer]);
-
-  const filteredCountries = countries.filter((country) =>
-    country.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedCountry, populationLayer, mapView]);
 
   const handleCountryChange = (e) => {
     onCountryChange(e.target.value);
   };
+
+  // Check if country has no data
+  const hasNoData = countryData === "NO_DATA";
 
   // Calculate display values for info boxes
   const currentYearField = getYearFieldName(selectedYear);
@@ -167,32 +110,40 @@ function Sidebar({
     ? getYearFieldName(previousYear)
     : null;
 
-  const displayData = selectedCountry && countryData ? countryData : null;
+  const displayData =
+    selectedCountry && countryData && !hasNoData ? countryData : null;
   const displayName = selectedCountry || "World";
 
-  const currentPopulation = displayData
+  const currentPopulation = hasNoData
+    ? null
+    : displayData
     ? displayData[currentYearField]
     : worldData
     ? worldData[selectedYear]
     : null;
 
-  const previousPopulation =
-    displayData && previousYearField
-      ? displayData[previousYearField]
-      : worldData && previousYear
-      ? worldData[previousYear]
-      : null;
+  const previousPopulation = hasNoData
+    ? null
+    : displayData && previousYearField
+    ? displayData[previousYearField]
+    : worldData && previousYear
+    ? worldData[previousYear]
+    : null;
 
   const growthRate = calculateGrowthRate(currentPopulation, previousPopulation);
 
   // Calculate overall growth from 1970 to 2022
-  const population1970 = displayData
+  const population1970 = hasNoData
+    ? null
+    : displayData
     ? displayData[getYearFieldName("1970")]
     : worldData
     ? worldData["1970"]
     : null;
 
-  const population2022 = displayData
+  const population2022 = hasNoData
+    ? null
+    : displayData
     ? displayData[getYearFieldName("2022")]
     : worldData
     ? worldData["2022"]
@@ -216,16 +167,13 @@ function Sidebar({
             value={selectedCountry}
             onChange={handleCountryChange}
             className="form-select country-select"
-            disabled={loading}
           >
             <option value="">
-              {loading
-                ? "Loading countries..."
-                : countries.length === 0
+              {countries.length === 0
                 ? "No countries available"
                 : "Select a country"}
             </option>
-            {filteredCountries.map((country) => (
+            {countries.map((country) => (
               <option key={country} value={country}>
                 {country}
               </option>
@@ -250,87 +198,101 @@ function Sidebar({
         </div>
       </div>
 
-      <div className="info-boxes">
-        <div className="info-box">
-          <h3>Population {selectedYear}</h3>
-          <div className="info-value">
-            {currentPopulation
-              ? formatPopulation(currentPopulation)
-              : "Loading..."}
-          </div>
-          <div className="info-label">{displayName}</div>
+      {hasNoData && selectedCountry ? (
+        <div className="no-data-message">
+          <p>📊 No population data available for {selectedCountry}</p>
+          <p className="no-data-hint">
+            This country is not included in our dataset. Please select another
+            country.
+          </p>
         </div>
-        <div className="info-box">
-          <h3>Growth Rate</h3>
-          <div className="info-value">
-            {growthRate !== null ? (
-              <span className={growthRate >= 0 ? "positive" : "negative"}>
-                {growthRate >= 0 ? "+" : ""}
-                {growthRate}%
-              </span>
-            ) : (
-              "N/A"
-            )}
+      ) : (
+        <>
+          <div className="info-boxes">
+            <div className="info-box">
+              <h3>Population {selectedYear}</h3>
+              <div className="info-value">
+                {currentPopulation
+                  ? formatPopulation(currentPopulation)
+                  : "Loading..."}
+              </div>
+              <div className="info-label">{displayName}</div>
+            </div>
+            <div className="info-box">
+              <h3>Growth Rate</h3>
+              <div className="info-value">
+                {growthRate !== null ? (
+                  <span className={growthRate >= 0 ? "positive" : "negative"}>
+                    {growthRate >= 0 ? "+" : ""}
+                    {growthRate}%
+                  </span>
+                ) : (
+                  "N/A"
+                )}
+              </div>
+              <div className="info-label">
+                {previousYear
+                  ? `${previousYear} - ${selectedYear}`
+                  : "No previous data"}
+              </div>
+            </div>
           </div>
-          <div className="info-label">
-            {previousYear
-              ? `${previousYear} - ${selectedYear}`
-              : "No previous data"}
-          </div>
-        </div>
-      </div>
 
-      {/* Overall Growth Statistics Box */}
-      <div className="growth-stats-box">
-        <h3>Overall Growth (1970 - 2022)</h3>
-        <div className="growth-stats-content">
-          <div className="growth-stat-item">
-            <div className="growth-stat-label">Population Change</div>
-            <div className="growth-stat-value">
-              {populationDifference !== null ? (
-                <span
-                  className={
-                    populationDifference >= 0 ? "positive" : "negative"
-                  }
-                >
-                  {populationDifference >= 0 ? "+" : ""}
-                  {formatPopulation(Math.abs(populationDifference))}
-                </span>
-              ) : (
-                "N/A"
-              )}
+          {/* Overall Growth Statistics Box */}
+          <div className="growth-stats-box">
+            <h3>Overall Growth (1970 - 2022)</h3>
+            <div className="growth-stats-content">
+              <div className="growth-stat-item">
+                <div className="growth-stat-label">Population Change</div>
+                <div className="growth-stat-value">
+                  {populationDifference !== null ? (
+                    <span
+                      className={
+                        populationDifference >= 0 ? "positive" : "negative"
+                      }
+                    >
+                      {populationDifference >= 0 ? "+" : ""}
+                      {formatPopulation(Math.abs(populationDifference))}
+                    </span>
+                  ) : (
+                    "N/A"
+                  )}
+                </div>
+              </div>
+              <div className="growth-stat-item">
+                <div className="growth-stat-label">Growth Percentage</div>
+                <div className="growth-stat-value">
+                  {overallGrowthRate !== null ? (
+                    <span
+                      className={
+                        overallGrowthRate >= 0 ? "positive" : "negative"
+                      }
+                    >
+                      {overallGrowthRate >= 0 ? "+" : ""}
+                      {overallGrowthRate}%
+                    </span>
+                  ) : (
+                    "N/A"
+                  )}
+                </div>
+              </div>
+              <div className="growth-stat-item">
+                <div className="growth-stat-label">1970 Population</div>
+                <div className="growth-stat-value baseline">
+                  {population1970 ? formatPopulation(population1970) : "N/A"}
+                </div>
+              </div>
+              <div className="growth-stat-item">
+                <div className="growth-stat-label">2022 Population</div>
+                <div className="growth-stat-value baseline">
+                  {population2022 ? formatPopulation(population2022) : "N/A"}
+                </div>
+              </div>
             </div>
+            <div className="growth-stats-footer">{displayName}</div>
           </div>
-          <div className="growth-stat-item">
-            <div className="growth-stat-label">Growth Percentage</div>
-            <div className="growth-stat-value">
-              {overallGrowthRate !== null ? (
-                <span
-                  className={overallGrowthRate >= 0 ? "positive" : "negative"}
-                >
-                  {overallGrowthRate >= 0 ? "+" : ""}
-                  {overallGrowthRate}%
-                </span>
-              ) : (
-                "N/A"
-              )}
-            </div>
-          </div>
-          <div className="growth-stat-item">
-            <div className="growth-stat-label">1970 Population</div>
-            <div className="growth-stat-value baseline">
-              {population1970 ? formatPopulation(population1970) : "N/A"}
-            </div>
-          </div>
-          <div className="growth-stat-item">
-            <div className="growth-stat-label">2022 Population</div>
-            <div className="growth-stat-value baseline">
-              {population2022 ? formatPopulation(population2022) : "N/A"}
-            </div>
-          </div>
-        </div>
-        <div className="growth-stats-footer">{displayName}</div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

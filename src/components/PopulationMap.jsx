@@ -4,6 +4,7 @@ import MapView from "@arcgis/core/views/MapView";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import Home from "@arcgis/core/widgets/Home";
 import ScaleBar from "@arcgis/core/widgets/ScaleBar";
+import { zoomToCountry } from "../utils/mapHelpers";
 import "./PopulationMap.css";
 
 function PopulationMap({
@@ -14,7 +15,6 @@ function PopulationMap({
 }) {
   const mapDiv = useRef(null);
   const viewRef = useRef(null);
-  const layerRef = useRef(null);
   const mapRef = useRef(null);
   const isInitialized = useRef(false);
 
@@ -79,19 +79,10 @@ function PopulationMap({
                   onCountryClick(countryName);
                 }
 
-                view
-                  .goTo(
-                    {
-                      target: graphic.geometry.extent.expand(1.3),
-                    },
-                    {
-                      duration: 1500,
-                      easing: "ease-in-out",
-                    }
-                  )
-                  .catch((error) => {
-                    console.error("Error zooming to clicked country:", error);
-                  });
+                // Use shared zoom utility - pass geometry, not graphic
+                zoomToCountry(view, graphic.geometry).catch((error) => {
+                  console.error("Error zooming to clicked country:", error);
+                });
               }
             }
           });
@@ -110,8 +101,6 @@ function PopulationMap({
       outFields: ["*"],
       popupEnabled: false,
     });
-
-    layerRef.current = populationLayer;
 
     map.add(populationLayer);
 
@@ -140,7 +129,6 @@ function PopulationMap({
         mapRef.current.destroy();
         mapRef.current = null;
       }
-      layerRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

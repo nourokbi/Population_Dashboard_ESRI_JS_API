@@ -1,43 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import "./Navbar.css";
 import LogoIcon from "../assets/people.png";
+import { SEARCH_CONFIG } from "../utils/constants";
 
-function Navbar({
-  searchTerm,
-  onSearchChange,
-  onCountrySelect,
-  populationLayer,
-  theme,
-  onThemeToggle,
-}) {
-  const [countries, setCountries] = useState([]);
+function Navbar({ countries, onCountrySelect, theme, onThemeToggle }) {
+  const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestion, setActiveSuggestion] = useState(-1);
   const searchRef = useRef(null);
-
-  // Fetch countries when layer is available
-  useEffect(() => {
-    if (populationLayer) {
-      const query = populationLayer.createQuery();
-      query.where = "1=1";
-      query.outFields = ["COUNTRY"];
-      query.returnDistinctValues = true;
-      query.orderByFields = ["COUNTRY"];
-
-      populationLayer
-        .queryFeatures(query)
-        .then((results) => {
-          const countryList = results.features
-            .map((feature) => feature.attributes.COUNTRY)
-            .filter((country) => country);
-          setCountries(countryList);
-        })
-        .catch((error) => {
-          console.error("Error fetching countries:", error);
-        });
-    }
-  }, [populationLayer]);
 
   // Update suggestions when search term changes
   useEffect(() => {
@@ -45,7 +16,7 @@ function Navbar({
       const filtered = countries.filter((country) =>
         country.toLowerCase().includes(searchTerm.toLowerCase())
       );
-      setSuggestions(filtered.slice(0, 5)); // Show max 5 suggestions
+      setSuggestions(filtered.slice(0, SEARCH_CONFIG.maxSuggestions));
       setShowSuggestions(true);
       setActiveSuggestion(-1);
     } else {
@@ -68,6 +39,7 @@ function Navbar({
 
   const handleSelectCountry = (country) => {
     onCountrySelect(country);
+    setSearchTerm(""); // Clear search after selection
     setShowSuggestions(false);
     setActiveSuggestion(-1);
   };
@@ -104,7 +76,7 @@ function Navbar({
           type="text"
           placeholder="Search country..."
           value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
+          onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => searchTerm && setShowSuggestions(true)}
           className="navbar-search-input"

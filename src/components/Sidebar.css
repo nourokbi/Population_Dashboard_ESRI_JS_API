@@ -294,6 +294,42 @@
   border-top-color: #6fba7f;
 }
 
+/* ===== NO DATA MESSAGE ===== */
+.no-data-message {
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3d4 100%);
+  border: 2px solid #f0ad4e;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(240, 173, 78, 0.15);
+}
+
+.no-data-message p {
+  margin: 0;
+  color: #8a6d3b;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.no-data-hint {
+  margin-top: 12px !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #8a6d3b;
+  opacity: 0.85;
+}
+
+.app-container.dark .no-data-message {
+  background: linear-gradient(135deg, #3d3520 0%, #2d2718 100%);
+  border-color: #d4a857;
+}
+
+.app-container.dark .no-data-message p,
+.app-container.dark .no-data-hint {
+  color: #f0ad4e;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 
 /* Tablets */
