@@ -102,19 +102,45 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 25px;
+  padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   min-height: 100px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .info-box h3 {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.info-value {
+  font-size: 32px;
+  font-weight: 700;
   color: white;
-  margin: 0 0 8px 0;
+  margin: 5px 0;
+  line-height: 1.2;
+}
+
+.info-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 5px;
+}
+
+.info-value .positive {
+  color: #a8f5a8;
+}
+
+.info-value .negative {
+  color: #ffb3b3;
 }
 
 .info-box p {

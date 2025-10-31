@@ -6,7 +6,12 @@ import Home from "@arcgis/core/widgets/Home";
 import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import "./PopulationMap.css";
 
-function PopulationMap({ onLayerLoad, theme = "light" }) {
+function PopulationMap({
+  onLayerLoad,
+  onViewLoad,
+  onCountryClick,
+  theme = "light",
+}) {
   const mapDiv = useRef(null);
   const viewRef = useRef(null);
   const layerRef = useRef(null);
@@ -18,19 +23,6 @@ function PopulationMap({ onLayerLoad, theme = "light" }) {
 
     isInitialized.current = true;
     let isMounted = true;
-
-    // Function to format numbers with K, M, B suffixes
-    function formatPopulation(value) {
-      if (value >= 1000000000) {
-        return (value / 1000000000).toFixed(2) + "B";
-      } else if (value >= 1000000) {
-        return (value / 1000000).toFixed(2) + "M";
-      } else if (value >= 1000) {
-        return (value / 1000).toFixed(2) + "K";
-      } else {
-        return value.toString();
-      }
-    }
 
     const map = new Map({
       basemap: "gray-vector",
@@ -73,6 +65,45 @@ function PopulationMap({ onLayerLoad, theme = "light" }) {
           unit: "metric",
         });
         view.ui.add(scaleBar, "bottom-left");
+
+        // Add click event to zoom to country when clicked on map
+        view.on("click", (event) => {
+          view.hitTest(event).then((response) => {
+            if (response.results.length > 0) {
+              const graphic = response.results[0].graphic;
+              // Check if the clicked feature is from the population layer
+              if (graphic.layer && graphic.layer.title !== "World Hillshade") {
+                // Get the country name from the clicked feature
+                const countryName = graphic.attributes.COUNTRY;
+
+                // Update the selected country in parent component
+                if (onCountryClick && countryName) {
+                  onCountryClick(countryName);
+                }
+
+                // Zoom to the clicked country's extent
+                view
+                  .goTo(
+                    {
+                      target: graphic.geometry.extent.expand(1.3),
+                    },
+                    {
+                      duration: 1500,
+                      easing: "ease-in-out",
+                    }
+                  )
+                  .catch((error) => {
+                    console.error("Error zooming to clicked country:", error);
+                  });
+              }
+            }
+          });
+        });
+
+        // Pass view to parent component
+        if (onViewLoad) {
+          onViewLoad(view);
+        }
       })
       .catch((error) => {
         console.error("Error initializing view:", error);
@@ -81,16 +112,10 @@ function PopulationMap({ onLayerLoad, theme = "light" }) {
     const populationLayer = new FeatureLayer({
       url: "https://services3.arcgis.com/UDCw00RKDRKPqASe/arcgis/rest/services/WorldPopulationFrom_1970_To_2022/FeatureServer/0",
       outFields: ["*"],
+      popupEnabled: false, // Disable popup
     });
 
     layerRef.current = populationLayer;
-    populationLayer.popupTemplate = {
-      title: "{COUNTRY}",
-      content: function (feature) {
-        const pop = feature.graphic.attributes.F2022_Population;
-        return "<b>Population 2022:</b> " + formatPopulation(pop);
-      },
-    };
 
     map.add(populationLayer);
 
