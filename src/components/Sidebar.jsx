@@ -70,14 +70,10 @@ function Sidebar({
               });
             } else {
               // Country exists but has no valid population data
-              console.log(
-                `Country ${selectedCountry} found but has no population data`
-              );
               setCountryData("NO_DATA");
             }
           } else {
             // No data found for this country
-            console.log(`No data found for country: ${selectedCountry}`);
             setCountryData("NO_DATA");
           }
         })

@@ -1,11 +1,5 @@
 import { ZOOM_CONFIG } from "./constants";
 
-/**
- * Zooms the map view to a specific country
- * @param {Object} mapView - ArcGIS MapView instance
- * @param {Object} geometry - Country feature geometry
- * @returns {Promise} - Promise that resolves when zoom completes
- */
 export const zoomToCountry = (mapView, geometry) => {
   if (!mapView || !geometry) {
     return Promise.reject(new Error("MapView or geometry is missing"));
@@ -22,13 +16,6 @@ export const zoomToCountry = (mapView, geometry) => {
   );
 };
 
-/**
- * Queries a country from the population layer
- * @param {Object} populationLayer - ArcGIS FeatureLayer
- * @param {string} countryName - Name of the country
- * @param {boolean} includeGeometry - Whether to include geometry in results
- * @returns {Promise} - Promise that resolves with query results
- */
 export const queryCountry = (
   populationLayer,
   countryName,
@@ -46,11 +33,6 @@ export const queryCountry = (
   return populationLayer.queryFeatures(query);
 };
 
-/**
- * Queries all countries from the population layer
- * @param {Object} populationLayer - ArcGIS FeatureLayer
- * @returns {Promise} - Promise that resolves with all features
- */
 export const queryAllCountries = (populationLayer) => {
   if (!populationLayer) {
     return Promise.reject(new Error("Layer is missing"));

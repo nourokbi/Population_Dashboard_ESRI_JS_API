@@ -92,7 +92,6 @@ function Charts({
               });
             } else {
               // Country exists but has no valid population data
-              console.log(`${selectedCountry} has no valid population data`);
               setPopulationData(null);
             }
           } else {

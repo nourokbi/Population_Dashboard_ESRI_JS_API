@@ -1,11 +1,5 @@
 import { COLORS } from "./constants";
 
-/**
- * Get common chart options based on theme
- * @param {string} theme - Current theme ('light' or 'dark')
- * @param {Object} customOptions - Custom options to merge
- * @returns {Object} - Chart options object
- */
 export const getBaseChartOptions = (theme, customOptions = {}) => {
   const textColor = theme === "dark" ? COLORS.textLight : COLORS.textDark;
   const gridColor = theme === "dark" ? COLORS.gridDark : COLORS.gridLight;
