@@ -18,6 +18,7 @@ A modern, interactive web application for visualizing and analyzing global popul
 - **Smart Zoom**: Automatically zoom to country borders with optimized extent fitting
 - **Map Click Integration**: Click any country on the map to automatically update selection and view data
 - **Theme Toggle**: Switch between light and dark modes with automatic basemap updates
+- **Fully Responsive**: Optimized layouts for desktop, tablet, and mobile devices
 
 ### Data Analytics & Visualization
 
@@ -246,6 +247,52 @@ All three methods synchronize automatically - selecting a country via any method
   - Light: `gray-vector`
   - Dark: `dark-gray-vector`
 - All components respect theme settings (charts, text colors, backgrounds)
+
+### Responsive Design
+
+The application is fully optimized for all screen sizes:
+
+#### 📱 **Mobile Phones (< 480px)**
+
+- Stacked vertical layout for easy scrolling
+- Navbar reorganizes: title and theme toggle on top, search bar below
+- Map height: 300px for optimal viewing
+- Info boxes displayed vertically with reduced padding
+- Charts stack vertically (one per row) with min-height 320px
+- Touch-optimized button sizes (minimum 44x44px)
+- Larger input fields (16px) to prevent iOS zoom on focus
+
+#### 📱 **Mobile Landscape (480px - 768px)**
+
+- Map height: 350px
+- Sidebar displays below map with horizontal info boxes
+- Charts stack vertically with min-height 280px
+- Optimized font sizes and spacing
+- Touch-friendly controls
+
+#### 💻 **Tablets (768px - 1024px)**
+
+- Sidebar moves below map (full width)
+- Info boxes display side-by-side for better space usage
+- Charts remain stacked vertically for better readability
+- Map height: 400px
+- Improved touch targets for stylus/finger input
+
+#### 🖥️ **Desktop (> 1024px)**
+
+- Original two-column layout (map + sidebar)
+- Charts side-by-side
+- Full-featured experience with hover effects
+- 60/40 split between map section and charts
+
+**Additional Mobile Optimizations:**
+
+- Smooth scrolling with `-webkit-overflow-scrolling: touch`
+- Disabled text selection on double-tap (except inputs)
+- Optimized tap highlight colors
+- Improved ArcGIS widget sizes for touch
+- Responsive font scaling
+- Proper viewport meta tag for scaling
 
 ## 🎯 Future Enhancements
 

@@ -70,3 +70,55 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* ===== MOBILE & TOUCH OPTIMIZATIONS ===== */
+
+/* Improve touch targets for mobile */
+@media (max-width: 768px) {
+  /* Ensure touch targets are at least 44x44px */
+  button,
+  select,
+  input,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text selection on double-tap */
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    -webkit-touch-callout: none;
+  }
+
+  /* Allow text selection in inputs */
+  input,
+  textarea {
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Smooth scrolling */
+  html {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent zoom on input focus in iOS */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 480px) {
+  :root {
+    font-size: 14px;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}

@@ -149,3 +149,115 @@
   color: white;
   margin: 0;
 }
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .sidebar {
+    border-left: none;
+    border-top: 3px solid #4a7c59;
+    padding: 20px;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .form-section {
+    flex: 1;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row !important; /* Force row direction */
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .form-group {
+    flex: 1 1 calc(50% - 7.5px); /* 50% width minus half the gap */
+    min-width: 200px;
+    margin-bottom: 0;
+  }
+
+  .info-boxes {
+    flex-direction: row;
+    gap: 15px;
+  }
+
+  .info-box {
+    flex: 1;
+    min-height: 120px;
+  }
+}
+
+/* Mobile Landscape */
+@media (max-width: 768px) {
+  .sidebar {
+    padding: 15px;
+  }
+
+  .form-section {
+    margin-bottom: 15px;
+  }
+
+  .info-boxes {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .info-box {
+    min-height: 100px;
+    padding: 15px;
+  }
+
+  .info-value {
+    font-size: 28px;
+  }
+
+  .info-box h3 {
+    font-size: 12px;
+  }
+
+  .info-label {
+    font-size: 11px;
+  }
+}
+
+/* Mobile Portrait */
+@media (max-width: 480px) {
+  .sidebar {
+    padding: 12px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+
+  .search-input,
+  .form-select {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .info-box {
+    padding: 15px 10px;
+    min-height: 90px;
+  }
+
+  .info-box h3 {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .info-value {
+    font-size: 24px;
+  }
+
+  .info-label {
+    font-size: 10px;
+  }
+
+  .country-select {
+    max-height: 120px;
+  }
+}
