@@ -6,11 +6,18 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  transition: background-color 0.3s ease;
+  background: linear-gradient(180deg, #f8faf9 0%, #e8ede9 50%, #f0f4f1 100%);
+  transition: background 0.3s ease;
 }
 
 .app-container.dark {
-  background-color: #1a1a1a;
+  background: linear-gradient(
+    180deg,
+    #0f1410 0%,
+    #1a1f1c 30%,
+    #151a17 70%,
+    #0d100e 100%
+  );
 }
 
 .app-container.dark .sidebar-container {

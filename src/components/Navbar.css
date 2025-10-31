@@ -2,27 +2,76 @@
   background: linear-gradient(135deg, #4a7c59 0%, #2d5a3d 100%);
   color: white;
   padding: 15px 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 60px;
   box-sizing: border-box;
   gap: 20px;
+  position: relative;
+}
+
+.navbar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 20%,
+    rgba(255, 255, 255, 0.6) 50%,
+    rgba(255, 255, 255, 0.4) 80%,
+    transparent 100%
+  );
+}
+
+.app-container.dark .navbar {
+  background: linear-gradient(135deg, #3d6b4d 0%, #2d5a3d 20%, #234a2e 100%);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(128, 224, 150, 0.1);
+}
+
+.app-container.dark .navbar::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(128, 224, 150, 0.2) 20%,
+    rgba(128, 224, 150, 0.3) 50%,
+    rgba(128, 224, 150, 0.2) 80%,
+    transparent 100%
+  );
 }
 
 .navbar-title {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-container.dark .navbar-title {
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 .navbar-title img {
-  height: 40px;
-  width: 40px;
-  margin-right: 10px;
+  height: 42px;
+  width: 42px;
+  margin-right: 0;
   vertical-align: middle;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
+}
+
+.navbar-title:hover img {
+  transform: scale(1.05);
 }
 
 .navbar-search {
@@ -33,33 +82,53 @@
 
 .navbar-search-input {
   width: 100%;
-  padding: 10px 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
+  padding: 12px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
   font-size: 14px;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.9);
   color: #2c3e50;
   box-sizing: border-box;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .navbar-search-input:focus {
   outline: none;
   border-color: white;
   background-color: white;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 .navbar-search-input::placeholder {
   color: #6c757d;
 }
 
+.app-container.dark .navbar-search-input {
+  background-color: rgba(61, 61, 61, 0.9);
+  color: #f5f5f5;
+  border-color: rgba(128, 224, 150, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.app-container.dark .navbar-search-input:focus {
+  background-color: #3d3d3d;
+  border-color: #80e096;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(128, 224, 150, 0.2);
+}
+
+.app-container.dark .navbar-search-input::placeholder {
+  color: #9ca3af;
+}
+
 .theme-toggle {
-  background: rgba(255, 255, 255, 0.15);
-  width: 45px;
-  height: 45px;
-  border-radius: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.2);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
   font-size: 22px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -69,22 +138,40 @@
   flex-shrink: 0;
   padding: 0;
   backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
 }
 
 .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px) rotate(15deg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .theme-toggle:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(0) scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
+
 .theme-toggle:focus {
   outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.app-container.dark .theme-toggle {
+  background: rgba(128, 224, 150, 0.15);
+  border-color: rgba(128, 224, 150, 0.3);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.app-container.dark .theme-toggle:hover {
+  background: rgba(128, 224, 150, 0.25);
+  border-color: rgba(128, 224, 150, 0.5);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.app-container.dark .theme-toggle:focus {
+  box-shadow: 0 0 0 3px rgba(128, 224, 150, 0.3);
 }
 
 /* Suggestions Dropdown */

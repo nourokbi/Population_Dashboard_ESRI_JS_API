@@ -185,31 +185,26 @@ function Sidebar({
 
   const growthRate = calculateGrowthRate(currentPopulation, previousPopulation);
 
-  // Calculate total growth from 1970 to 2022
-  const firstYearField = getYearFieldName("1970");
-  const lastYearField = getYearFieldName("2022");
-
-  const firstYearPopulation = displayData
-    ? displayData[firstYearField]
+  // Calculate overall growth from 1970 to 2022
+  const population1970 = displayData
+    ? displayData[getYearFieldName("1970")]
     : worldData
     ? worldData["1970"]
     : null;
 
-  const lastYearPopulation = displayData
-    ? displayData[lastYearField]
+  const population2022 = displayData
+    ? displayData[getYearFieldName("2022")]
     : worldData
     ? worldData["2022"]
     : null;
 
-  const totalGrowth =
-    firstYearPopulation && lastYearPopulation
-      ? lastYearPopulation - firstYearPopulation
+  const overallGrowthRate =
+    population1970 && population2022
+      ? calculateGrowthRate(population2022, population1970)
       : null;
 
-  const totalGrowthRate = calculateGrowthRate(
-    lastYearPopulation,
-    firstYearPopulation
-  );
+  const populationDifference =
+    population2022 && population1970 ? population2022 - population1970 : null;
 
   return (
     <div className="sidebar">
@@ -285,57 +280,57 @@ function Sidebar({
         </div>
       </div>
 
-      {selectedCountry && countryData && (
-        <div className="growth-stats-box">
-          <h3>Total Growth (1970 - 2022)</h3>
-          <div className="growth-stats-content">
-            <div className="growth-stat-item">
-              <div className="growth-stat-label">1970 Population</div>
-              <div className="growth-stat-value">
-                {firstYearPopulation
-                  ? formatPopulation(firstYearPopulation)
-                  : "N/A"}
-              </div>
+      {/* Overall Growth Statistics Box */}
+      <div className="growth-stats-box">
+        <h3>Overall Growth (1970 - 2022)</h3>
+        <div className="growth-stats-content">
+          <div className="growth-stat-item">
+            <div className="growth-stat-label">Population Change</div>
+            <div className="growth-stat-value">
+              {populationDifference !== null ? (
+                <span
+                  className={
+                    populationDifference >= 0 ? "positive" : "negative"
+                  }
+                >
+                  {populationDifference >= 0 ? "+" : ""}
+                  {formatPopulation(Math.abs(populationDifference))}
+                </span>
+              ) : (
+                "N/A"
+              )}
             </div>
-            <div className="growth-stat-item">
-              <div className="growth-stat-label">2022 Population</div>
-              <div className="growth-stat-value">
-                {lastYearPopulation
-                  ? formatPopulation(lastYearPopulation)
-                  : "N/A"}
-              </div>
+          </div>
+          <div className="growth-stat-item">
+            <div className="growth-stat-label">Growth Percentage</div>
+            <div className="growth-stat-value">
+              {overallGrowthRate !== null ? (
+                <span
+                  className={overallGrowthRate >= 0 ? "positive" : "negative"}
+                >
+                  {overallGrowthRate >= 0 ? "+" : ""}
+                  {overallGrowthRate}%
+                </span>
+              ) : (
+                "N/A"
+              )}
             </div>
-            <div className="growth-stat-item highlight">
-              <div className="growth-stat-label">Total Change</div>
-              <div className="growth-stat-value">
-                {totalGrowth !== null ? (
-                  <span className={totalGrowth >= 0 ? "positive" : "negative"}>
-                    {totalGrowth >= 0 ? "+" : ""}
-                    {formatPopulation(totalGrowth)}
-                  </span>
-                ) : (
-                  "N/A"
-                )}
-              </div>
+          </div>
+          <div className="growth-stat-item">
+            <div className="growth-stat-label">1970 Population</div>
+            <div className="growth-stat-value baseline">
+              {population1970 ? formatPopulation(population1970) : "N/A"}
             </div>
-            <div className="growth-stat-item highlight">
-              <div className="growth-stat-label">Growth Rate</div>
-              <div className="growth-stat-value">
-                {totalGrowthRate !== null ? (
-                  <span
-                    className={totalGrowthRate >= 0 ? "positive" : "negative"}
-                  >
-                    {totalGrowthRate >= 0 ? "+" : ""}
-                    {totalGrowthRate}%
-                  </span>
-                ) : (
-                  "N/A"
-                )}
-              </div>
+          </div>
+          <div className="growth-stat-item">
+            <div className="growth-stat-label">2022 Population</div>
+            <div className="growth-stat-value baseline">
+              {population2022 ? formatPopulation(population2022) : "N/A"}
             </div>
           </div>
         </div>
-      )}
+        <div className="growth-stats-footer">{displayName}</div>
+      </div>
     </div>
   );
 }
