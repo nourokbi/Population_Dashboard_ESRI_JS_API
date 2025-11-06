@@ -40,13 +40,6 @@ function PopulationMap({
         minZoom: 2,
         maxZoom: 18,
       },
-      popup: {
-        dockEnabled: true,
-        dockOptions: {
-          position: "top-right",
-          breakpoint: false,
-        },
-      },
     });
 
     viewRef.current = view;
@@ -78,7 +71,6 @@ function PopulationMap({
                   onCountryClick(countryName);
                 }
 
-                // Use shared zoom utility - pass geometry, not graphic
                 zoomToCountry(view, graphic.geometry).catch((error) => {
                   console.error("Error zooming to clicked country:", error);
                 });

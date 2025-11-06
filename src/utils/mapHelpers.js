@@ -1,5 +1,3 @@
-import { ZOOM_CONFIG } from "./constants";
-
 export const zoomToCountry = (mapView, geometry) => {
   if (!mapView || !geometry) {
     return Promise.reject(new Error("MapView or geometry is missing"));
@@ -7,11 +5,11 @@ export const zoomToCountry = (mapView, geometry) => {
 
   return mapView.goTo(
     {
-      target: geometry.extent.expand(ZOOM_CONFIG.extent),
+      target: geometry.extent.expand(1.3),
     },
     {
-      duration: ZOOM_CONFIG.duration,
-      easing: ZOOM_CONFIG.easing,
+      duration: 1500,
+      easing: "ease-in-out",
     }
   );
 };

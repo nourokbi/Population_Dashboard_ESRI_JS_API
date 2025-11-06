@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "./Navbar.css";
 import LogoIcon from "../assets/people.png";
 import { SEARCH_CONFIG } from "../utils/constants";
+import { Sun, Moon } from "lucide-react";
 
 function Navbar({ countries, onCountrySelect, theme, onThemeToggle }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -98,7 +99,11 @@ function Navbar({ countries, onCountrySelect, theme, onThemeToggle }) {
         )}
       </div>
       <button className="theme-toggle" onClick={onThemeToggle}>
-        {theme === "light" ? "🌙" : "☀️"}
+        {theme === "light" ? (
+          <Moon style={{ color: "white" }} />
+        ) : (
+          <Sun style={{ color: "white" }} />
+        )}
       </button>
     </div>
   );
