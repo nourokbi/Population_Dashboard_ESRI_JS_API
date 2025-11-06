@@ -13,7 +13,6 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [worldData, setWorldData] = useState(null);
   const [theme, setTheme] = useState(() => {
-    // Load theme from localStorage on initial render
     const savedTheme = localStorage.getItem(STORAGE_KEYS.theme);
     return savedTheme || "light";
   });
@@ -29,12 +28,11 @@ function App() {
     setMapView(view);
   }, []);
 
-  // Save theme to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.theme, theme);
   }, [theme]);
 
-  // Fetch countries
+  // this is the useEffect to fetch countries for the Navbar to send it as props to sidebar and search with suggestion
   useEffect(() => {
     if (populationLayer) {
       const query = populationLayer.createQuery();
@@ -57,12 +55,13 @@ function App() {
     }
   }, [populationLayer]);
 
-  // Fetch world data (used by both Sidebar and Charts)
+  // Fetch world data used by both Sidebar and Charts
   useEffect(() => {
     if (populationLayer) {
       queryAllCountries(populationLayer)
         .then((results) => {
           // Calculate total world population for each year
+          // format <year>: <population>
           const totals = {};
           const years = AVAILABLE_YEARS.map(String);
 

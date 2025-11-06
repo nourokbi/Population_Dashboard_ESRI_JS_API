@@ -25,7 +25,6 @@ function Navbar({ countries, onCountrySelect, theme, onThemeToggle }) {
     }
   }, [searchTerm, countries]);
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -39,7 +38,7 @@ function Navbar({ countries, onCountrySelect, theme, onThemeToggle }) {
 
   const handleSelectCountry = (country) => {
     onCountrySelect(country);
-    setSearchTerm(""); // Clear search after selection
+    setSearchTerm("");
     setShowSuggestions(false);
     setActiveSuggestion(-1);
   };

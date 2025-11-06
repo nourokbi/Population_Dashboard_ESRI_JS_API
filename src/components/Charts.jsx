@@ -260,7 +260,6 @@ function Charts({
     },
   });
 
-  // Bar chart options
   const barOptions = getBaseChartOptions(theme, {
     indexAxis: "y",
     layout: {

@@ -69,11 +69,9 @@ function Sidebar({
                 }
               });
             } else {
-              // Country exists but has no valid population data
               setCountryData("NO_DATA");
             }
           } else {
-            // No data found for this country
             setCountryData("NO_DATA");
           }
         })
@@ -247,7 +245,7 @@ function Sidebar({
                         populationDifference >= 0 ? "positive" : "negative"
                       }
                     >
-                      {populationDifference >= 0 ? "+" : ""}
+                      {populationDifference >= 0 ? "+" : "-"}
                       {formatPopulation(Math.abs(populationDifference))}
                     </span>
                   ) : (

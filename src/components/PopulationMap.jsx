@@ -53,7 +53,6 @@ function PopulationMap({
 
     view
       .when(() => {
-        // Adding and removing widgets
         view.ui.remove("attribution");
 
         const homeWidget = new Home({
@@ -67,11 +66,11 @@ function PopulationMap({
         });
         view.ui.add(scaleBar, "bottom-left");
 
-        // Achieve zoom to country on click
         view.on("click", (event) => {
           view.hitTest(event).then((response) => {
             if (response.results.length > 0) {
               const graphic = response.results[0].graphic;
+              console.log(response);
               if (graphic.layer && graphic.layer.title !== "World Hillshade") {
                 const countryName = graphic.attributes.COUNTRY;
 
